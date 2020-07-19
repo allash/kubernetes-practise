@@ -10,7 +10,7 @@ spec:
   - host: arch.homework
     http: 
       paths:
-        - path: /student/allash($|/)(.*)
+        - path: /otusapp/allash($|/)(.*)
           backend:
             serviceName: architect-service 
             servicePort: 8000 
