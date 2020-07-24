@@ -4,8 +4,9 @@
 
 ```bash
 cd hw2/architect-chart
+kubectl create namespace architect-course
 helm dependency update ./
-helm install architect-app ./
+helm install architect-app ./ --namespace architect-course
 ```
 
 ## Run Postman Tests
