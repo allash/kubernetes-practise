@@ -1,0 +1,20 @@
+{{- if .Values.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: architect-servicemonitor
+  namespace: architect-course
+  labels:
+    app: architect-servicemonitor
+spec:
+  namespaceSelector:
+    matchNames:
+    - architect-course
+  selector:
+    matchLabels:
+      app: architect-service
+  endpoints:
+  - interval: 15s
+    port: web
+    path: /actuator/prometheus
+{{- end }}      
