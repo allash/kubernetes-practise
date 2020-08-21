@@ -1,0 +1,4686 @@
+{
+  "collection": {
+    "_": {
+      "postman_id": "abd084cc-5e9a-480a-bb17-ec6c2eea4aaf"
+    },
+    "item": [
+      {
+        "id": "558c3dd4-b20e-4b61-acdc-5a8a0fbb5eca",
+        "name": "User registration",
+        "request": {
+          "url": {
+            "path": [
+              "register"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "30a49823-dc57-4842-b656-fcaf6d16155b",
+              "type": "text/javascript",
+              "exec": [
+                "pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))",
+                "pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))",
+                "pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                "pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+              ],
+              "_lastExecutionId": "43ebf98a-6a75-49a8-96bc-36f778b3cb55"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "86109fc2-e310-48b9-9d7a-a7a3748b3d05",
+              "type": "text/javascript",
+              "exec": [
+                "var responseJSON = JSON.parse(responseBody)",
+                "console.log(responseJSON);"
+              ],
+              "_lastExecutionId": "da884eb4-0a00-4539-8793-c86cb296563a"
+            }
+          }
+        ]
+      },
+      {
+        "id": "4ada94b1-54ae-4ac2-b15a-52a85bbe104a",
+        "name": "Get user info when not logged in",
+        "request": {
+          "url": {
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "1"
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "63135a41-8334-40c3-a591-3cff8687b0ba",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test cannot get user data without login\", function () {",
+                "    pm.response.to.have.status(401);",
+                "    var jsonData = pm.response.json();",
+                "    pm.expect(jsonData).to.not.have.property(\"email\");",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "c1e4eb19-3efe-4b4b-9710-d156b5c12d79"
+            }
+          }
+        ],
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        }
+      },
+      {
+        "id": "49e5f21f-8c3d-485b-b058-ae22a70a8735",
+        "name": "Update user when not logged in",
+        "request": {
+          "url": {
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "1738e5a7-7d5c-4a12-8d3c-db6e26849b48",
+              "type": "text/javascript",
+              "exec": [
+                "pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                "pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+              ],
+              "_lastExecutionId": "65c54411-0514-4299-ad25-6459b52cecf3"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "7403056a-c31c-43e4-991f-114f29ed3b1c",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test cannot update user without login\", function () {",
+                "    pm.response.to.have.status(401);",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "6a88f5ff-173c-4562-97ce-dee94765ba85"
+            }
+          }
+        ]
+      },
+      {
+        "id": "72debea3-7a5f-47f3-b38e-aaf509432a47",
+        "name": "Login",
+        "request": {
+          "url": {
+            "path": [
+              "login"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "ce2bd778-a834-4200-8253-2794f3a02ce3",
+              "type": "text/javascript",
+              "exec": [
+                "var responseJSON = JSON.parse(responseBody)",
+                "pm.collectionVariables.set(\"authToken\", responseJSON[\"token\"])"
+              ],
+              "_lastExecutionId": "ac6da83b-ede7-49cc-9287-b0f8353bdcc8"
+            }
+          }
+        ]
+      },
+      {
+        "id": "8bc7322c-438d-42c1-8c96-4939b27c04e8",
+        "name": "Update user when logged in",
+        "request": {
+          "url": {
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "99ca66b6-7b1f-4dc3-a09f-cbdec5e6cdcd",
+              "type": "text/javascript",
+              "exec": [
+                "pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                "pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+              ],
+              "_lastExecutionId": "d0237b8d-fcf2-4599-b6d5-58595a744c39"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "a88c9037-d085-4248-b506-0dd1fcc2c17b",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test can update user with valid token\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "b92366e6-86a2-4a0e-ae7d-f4c832aeb7d5"
+            }
+          }
+        ]
+      },
+      {
+        "id": "ce194dce-5248-49aa-bac6-0db9a5e6aa92",
+        "name": "Get user info when logged in",
+        "request": {
+          "url": {
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "1"
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "5042eb3f-6889-4acc-b339-fdef9880a1d4",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test can get user data with valid token\", function () {",
+                "    pm.response.to.have.status(200);",
+                "    var jsonData = pm.response.json();",
+                "    pm.expect(jsonData.lastName).to.not.eql(pm.collectionVariables.get(\"lastName\"))",
+                "    pm.expect(jsonData.firstName).to.not.eql(pm.collectionVariables.get(\"firstName\"))",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "ae197a1e-f7d7-416c-a7ac-014449ec5516"
+            }
+          }
+        ],
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        }
+      },
+      {
+        "id": "d6478fc1-055a-434f-854d-4e839531992b",
+        "name": "Auth",
+        "request": {
+          "url": {
+            "path": [
+              "auth"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [],
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        }
+      },
+      {
+        "id": "dd37722f-417b-4a0e-af66-3d3718993f80",
+        "name": "Logout with valid token",
+        "request": {
+          "url": {
+            "path": [
+              "user-logout"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            }
+          ],
+          "method": "DELETE",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "62cec46e-884c-4059-8188-3d956f849c5f",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test can logout with valid token\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "7adca9bf-6683-423d-9770-90b6930f54d1"
+            }
+          }
+        ]
+      },
+      {
+        "id": "c945f15b-244d-483e-94cd-aab617f7e5eb",
+        "name": "Logout with invalid token",
+        "request": {
+          "url": {
+            "path": [
+              "user-logout"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            }
+          ],
+          "method": "DELETE",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "d763a23e-9ca7-4d9c-b26a-72f98eb2d93f",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test cannot logout with invalid token\", function () {",
+                "    pm.response.to.have.status(401);",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "7b0fd6a2-0c3a-420a-996d-efebe75e2484"
+            }
+          }
+        ]
+      },
+      {
+        "id": "706f1814-0303-4282-b800-4bc2cb73c2e4",
+        "name": "Sign In",
+        "request": {
+          "url": {
+            "path": [
+              "signin"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "16976459-9fa4-42d2-993c-e310c4c7fee7"
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [],
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        }
+      },
+      {
+        "id": "08c31e33-db06-4e75-88a7-259d2d32360f",
+        "name": "Second user registration",
+        "request": {
+          "url": {
+            "path": [
+              "register"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"password\": \"{{secondUserPassword}}\",\n    \"firstName\": \"{{secondUserFirstName}}\",\n    \"lastName\": \"{{secondUserLastName}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "67806726-3b14-4c6e-bb5c-37b58d3d74ca",
+              "type": "text/javascript",
+              "exec": [
+                "pm.collectionVariables.set(\"secondUserPassword\", pm.variables.replaceIn('{{$randomPassword}}'))",
+                "pm.collectionVariables.set(\"secondUserEmail\", pm.variables.replaceIn('{{$randomEmail}}'))",
+                "pm.collectionVariables.set(\"secondUserFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                "pm.collectionVariables.set(\"secondUserLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+              ],
+              "_lastExecutionId": "30252de7-5a71-4a01-a874-896a47281c5b"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "ffafb246-a1d2-4291-8119-3b1b967dde91",
+              "type": "text/javascript",
+              "exec": [
+                ""
+              ],
+              "_lastExecutionId": "3cc4b5bf-ad9b-4181-93be-7fd29dee72af"
+            }
+          }
+        ]
+      },
+      {
+        "id": "dd12a42e-0ebb-4d5c-8093-cba42aad6f0d",
+        "name": "Second user login",
+        "request": {
+          "url": {
+            "path": [
+              "login"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"password\": \"{{secondUserPassword}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "fcee0bbc-c7b8-4a3a-9395-f99211fb7206",
+              "type": "text/javascript",
+              "exec": [
+                "var responseJSON = JSON.parse(responseBody)",
+                "pm.collectionVariables.set(\"authToken\", responseJSON[\"token\"])"
+              ],
+              "_lastExecutionId": "be661907-b6b6-4a5f-926d-8a0887073746"
+            }
+          }
+        ]
+      },
+      {
+        "id": "78db03b5-5d33-4b04-8df4-3dd94c477de3",
+        "name": "Second user updates data with own email",
+        "request": {
+          "url": {
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "9664e6f3-afcb-405c-892e-4a7ec323393c",
+              "type": "text/javascript",
+              "exec": [
+                "pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                "pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+              ],
+              "_lastExecutionId": "d67eee6b-74ba-4a41-82d2-e9a50a24f1da"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "d01df2e6-0645-4871-a923-987af96f06f9",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test can update user with valid token\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "ad519822-38ff-4a14-9209-0ed0d8d84199"
+            }
+          }
+        ]
+      },
+      {
+        "id": "14667ab1-f87e-46f6-a339-39faf2288937",
+        "name": "Second user updates data without own email",
+        "request": {
+          "url": {
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "prerequest",
+            "script": {
+              "id": "7fc217e6-2d57-4cfc-9871-70f91105b60f",
+              "type": "text/javascript",
+              "exec": [
+                "pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                "pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+              ],
+              "_lastExecutionId": "79d31e5e-a8de-4265-8ec1-6598cdff4961"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "id": "9061e9af-e6c7-464d-9bdd-a0b8e612f2f1",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test can update user with valid token\", function () {",
+                "    pm.response.to.have.status(404);",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "c7988af7-fc5e-41a7-8417-42836aba2096"
+            }
+          }
+        ]
+      },
+      {
+        "id": "fad20daa-6d46-4fa4-85a7-cb769d554a25",
+        "name": "Second user reads only own data",
+        "request": {
+          "url": {
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "{{authToken}}"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "1"
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "926e5c84-865e-4b49-a302-2357fbdf64f1",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test(\"test can get user data with valid token\", function () {",
+                "    pm.response.to.have.status(200);",
+                "    var jsonData = pm.response.json();",
+                "    pm.expect(jsonData.lastName).to.not.eql(pm.collectionVariables.get(\"lastName\"))",
+                "    pm.expect(jsonData.firstName).to.not.eql(pm.collectionVariables.get(\"firstName\"))",
+                "});",
+                ""
+              ],
+              "_lastExecutionId": "911ca257-e738-4dce-b977-1a574ac965aa"
+            }
+          }
+        ],
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        }
+      }
+    ],
+    "event": [],
+    "protocolProfileBehavior": {},
+    "variable": [
+      {
+        "id": "bea3cb8d-f05e-420d-bf33-f840e2f3042e",
+        "type": "any",
+        "value": "",
+        "key": "email"
+      },
+      {
+        "id": "21ef3574-736d-4b79-ad9d-4940e3cfbca5",
+        "type": "any",
+        "value": "",
+        "key": "firstName"
+      },
+      {
+        "id": "38ee2b56-15b9-4b54-aeb2-d99f01355f6b",
+        "type": "any",
+        "value": "",
+        "key": "lastName"
+      },
+      {
+        "id": "8bcc76d1-d41f-4ab0-b5ad-ca9bf7f42f6f",
+        "type": "any",
+        "value": "",
+        "key": "password"
+      },
+      {
+        "id": "a2f37b55-5c8a-4135-a183-5604aeb767d0",
+        "type": "any",
+        "value": "",
+        "key": "authToken"
+      },
+      {
+        "id": "e1a952e9-ba6f-4ce1-84be-fbbbade5c0fa",
+        "type": "any",
+        "value": "",
+        "key": "updatedFirstName"
+      },
+      {
+        "id": "f2880172-5d82-459d-b859-0aee6ac0888a",
+        "type": "any",
+        "value": "",
+        "key": "updatedLastName"
+      },
+      {
+        "id": "43337138-3b07-469e-a86a-5b907078c5ea",
+        "type": "any",
+        "value": "",
+        "key": "secondUserEmail"
+      },
+      {
+        "id": "1f651dc0-ac77-41ed-ad04-1d7169001248",
+        "type": "any",
+        "value": "",
+        "key": "secondUserFirstName"
+      },
+      {
+        "id": "73be74a4-dfc3-486d-9c10-02eb199b3eb3",
+        "type": "any",
+        "value": "",
+        "key": "secondUserLastName"
+      },
+      {
+        "id": "41be220a-6734-46b7-b7bb-da41049bc1eb",
+        "type": "any",
+        "value": "",
+        "key": "secondUserPassword"
+      }
+    ],
+    "info": {
+      "_postman_id": "abd084cc-5e9a-480a-bb17-ec6c2eea4aaf",
+      "name": "Auth API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    }
+  },
+  "environment": {
+    "_": {
+      "postman_variable_scope": "environment",
+      "postman_exported_at": "2020-08-22T19:51:23.588Z",
+      "postman_exported_using": "Postman/7.30.1"
+    },
+    "id": "8e5cc987-13b2-44d2-8b60-3ae3b8aaf3f4",
+    "name": "dev",
+    "values": [
+      {
+        "type": "any",
+        "value": "http://arch.homework",
+        "key": "baseUrl"
+      },
+      {
+        "type": "any",
+        "value": "1",
+        "key": "userId"
+      }
+    ]
+  },
+  "globals": {
+    "id": "d1ecc65f-da0e-4847-b4f2-ff4c6e195eb3",
+    "values": []
+  },
+  "run": {
+    "stats": {
+      "iterations": {
+        "total": 1,
+        "pending": 0,
+        "failed": 0
+      },
+      "items": {
+        "total": 15,
+        "pending": 0,
+        "failed": 0
+      },
+      "scripts": {
+        "total": 19,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequests": {
+        "total": 15,
+        "pending": 0,
+        "failed": 0
+      },
+      "requests": {
+        "total": 15,
+        "pending": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 15,
+        "pending": 0,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 9,
+        "pending": 0,
+        "failed": 0
+      },
+      "testScripts": {
+        "total": 13,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequestScripts": {
+        "total": 6,
+        "pending": 0,
+        "failed": 0
+      }
+    },
+    "timings": {
+      "responseAverage": 29.2,
+      "responseMin": 5,
+      "responseMax": 99,
+      "responseSd": 30.03153897710427,
+      "dnsAverage": 0,
+      "dnsMin": 0,
+      "dnsMax": 0,
+      "dnsSd": 0,
+      "firstByteAverage": 0,
+      "firstByteMin": 0,
+      "firstByteMax": 0,
+      "firstByteSd": 0,
+      "started": 1598127073742,
+      "completed": 1598127074444
+    },
+    "executions": [
+      {
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 15,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "2a03f238-f796-46fd-be6c-0744b5bcc35b",
+          "httpRequestId": "b0455aa5-ffc6-4fb2-85c9-6ce4e144dc7b"
+        },
+        "item": {
+          "id": "558c3dd4-b20e-4b61-acdc-5a8a0fbb5eca",
+          "name": "User registration",
+          "request": {
+            "url": {
+              "path": [
+                "register"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "30a49823-dc57-4842-b656-fcaf6d16155b",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))",
+                  "pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))",
+                  "pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                  "pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+                ],
+                "_lastExecutionId": "43ebf98a-6a75-49a8-96bc-36f778b3cb55"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "86109fc2-e310-48b9-9d7a-a7a3748b3d05",
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody)",
+                  "console.log(responseJSON);"
+                ],
+                "_lastExecutionId": "da884eb4-0a00-4539-8793-c86cb296563a"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "register"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "70976fc1-c5b4-44bc-a2ee-fedea5e56e75",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 131,
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Colin_Senger65@yahoo.com\",\n    \"password\": \"ZJzxASNhSE2IUII\",\n    \"firstName\": \"Brandi\",\n    \"lastName\": \"Beatty\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "8949293f-90b6-4994-8f06-5084d5ef7ab5",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:13 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              54,
+              55,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 99,
+          "responseSize": 9
+        },
+        "id": "558c3dd4-b20e-4b61-acdc-5a8a0fbb5eca"
+      },
+      {
+        "cursor": {
+          "ref": "775529c2-cee7-4ed5-90de-6cc72f051ce6",
+          "length": 15,
+          "cycles": 1,
+          "position": 1,
+          "iteration": 0,
+          "httpRequestId": "3275de46-a985-48b9-8399-63fa1ca44c94"
+        },
+        "item": {
+          "id": "4ada94b1-54ae-4ac2-b15a-52a85bbe104a",
+          "name": "Get user info when not logged in",
+          "request": {
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              },
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "method": "GET",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "63135a41-8334-40c3-a591-3cff8687b0ba",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test cannot get user data without login\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.not.have.property(\"email\");",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "c1e4eb19-3efe-4b4b-9710-d156b5c12d79"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "1"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "797d635b-5f4c-416b-8392-806f456234c0",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Referer",
+              "value": "http://arch.homework/users/me",
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=424AD50F4B2EB63AE1795D3163FC9E7A",
+              "system": true
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "0744c83a-ca3a-4714-9227-5ecafa1e0079",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:13 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              80,
+              108,
+              101,
+              97,
+              115,
+              101,
+              32,
+              112,
+              114,
+              111,
+              118,
+              105,
+              100,
+              101,
+              32,
+              118,
+              97,
+              108,
+              105,
+              100,
+              32,
+              99,
+              114,
+              101,
+              100,
+              101,
+              110,
+              116,
+              105,
+              97,
+              108,
+              115,
+              33,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 14,
+          "responseSize": 47
+        },
+        "id": "4ada94b1-54ae-4ac2-b15a-52a85bbe104a",
+        "assertions": [
+          {
+            "assertion": "test cannot get user data without login",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "abc41026-a5c2-4b97-8a97-10c2304a5b62",
+          "length": 15,
+          "cycles": 1,
+          "position": 2,
+          "iteration": 0,
+          "httpRequestId": "c4ebc41c-cd76-4920-8641-0335377bdd1a"
+        },
+        "item": {
+          "id": "49e5f21f-8c3d-485b-b058-ae22a70a8735",
+          "name": "Update user when not logged in",
+          "request": {
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              },
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "5"
+              }
+            ],
+            "method": "PUT",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "1738e5a7-7d5c-4a12-8d3c-db6e26849b48",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                  "pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+                ],
+                "_lastExecutionId": "65c54411-0514-4299-ad25-6459b52cecf3"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "7403056a-c31c-43e4-991f-114f29ed3b1c",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test cannot update user without login\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "6a88f5ff-173c-4562-97ce-dee94765ba85"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": ""
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "b36f9b0e-3b98-4333-a88a-4ca30aeb0668",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=424AD50F4B2EB63AE1795D3163FC9E7A",
+              "system": true
+            },
+            {
+              "key": "Referer",
+              "value": "http://arch.homework/users/me",
+              "system": true
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Colin_Senger65@yahoo.com\",\n    \"firstName\": \"Trinity\",\n    \"lastName\": \"Shanahan\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "e5dfe9c3-8ae0-4a21-ac61-bed9f98c6425",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:13 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              80,
+              108,
+              101,
+              97,
+              115,
+              101,
+              32,
+              112,
+              114,
+              111,
+              118,
+              105,
+              100,
+              101,
+              32,
+              118,
+              97,
+              108,
+              105,
+              100,
+              32,
+              99,
+              114,
+              101,
+              100,
+              101,
+              110,
+              116,
+              105,
+              97,
+              108,
+              115,
+              33,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 10,
+          "responseSize": 47
+        },
+        "id": "49e5f21f-8c3d-485b-b058-ae22a70a8735",
+        "assertions": [
+          {
+            "assertion": "test cannot update user without login",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "74364c72-b77f-4bf6-b0a3-00b438f86ba3",
+          "length": 15,
+          "cycles": 1,
+          "position": 3,
+          "iteration": 0,
+          "httpRequestId": "c9259cf7-7d0f-464d-9fa1-704684229644"
+        },
+        "item": {
+          "id": "72debea3-7a5f-47f3-b38e-aaf509432a47",
+          "name": "Login",
+          "request": {
+            "url": {
+              "path": [
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "ce2bd778-a834-4200-8253-2794f3a02ce3",
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody)",
+                  "pm.collectionVariables.set(\"authToken\", responseJSON[\"token\"])"
+                ],
+                "_lastExecutionId": "ac6da83b-ede7-49cc-9287-b0f8353bdcc8"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "login"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "283b57a2-8ebd-4ad3-a3b3-b347e7c68a77",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 78,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=424AD50F4B2EB63AE1795D3163FC9E7A",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Colin_Senger65@yahoo.com\",\n    \"password\": \"ZJzxASNhSE2IUII\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "56a4ae15-4af7-4662-95f2-241c663137bf",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              116,
+              111,
+              107,
+              101,
+              110,
+              34,
+              58,
+              34,
+              55,
+              55,
+              98,
+              56,
+              101,
+              48,
+              100,
+              52,
+              45,
+              48,
+              53,
+              98,
+              55,
+              45,
+              52,
+              101,
+              100,
+              55,
+              45,
+              56,
+              48,
+              52,
+              55,
+              45,
+              48,
+              102,
+              100,
+              98,
+              49,
+              51,
+              51,
+              102,
+              98,
+              97,
+              50,
+              102,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 69,
+          "responseSize": 48
+        },
+        "id": "72debea3-7a5f-47f3-b38e-aaf509432a47"
+      },
+      {
+        "cursor": {
+          "ref": "a3f90444-ad54-4738-b776-8d713c006013",
+          "length": 15,
+          "cycles": 1,
+          "position": 4,
+          "iteration": 0,
+          "httpRequestId": "14dda023-41e1-4d82-8695-46c7e91de00b"
+        },
+        "item": {
+          "id": "8bc7322c-438d-42c1-8c96-4939b27c04e8",
+          "name": "Update user when logged in",
+          "request": {
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              },
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "5"
+              }
+            ],
+            "method": "PUT",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "99ca66b6-7b1f-4dc3-a09f-cbdec5e6cdcd",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                  "pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+                ],
+                "_lastExecutionId": "d0237b8d-fcf2-4599-b6d5-58595a744c39"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "a88c9037-d085-4248-b506-0dd1fcc2c17b",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test can update user with valid token\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "b92366e6-86a2-4a0e-ae7d-f4c832aeb7d5"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "77b8e0d4-05b7-4ed7-8047-0fdb133fba2f"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "91f5ec85-d0a5-47e9-bbae-26747870b2aa",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 96,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=424AD50F4B2EB63AE1795D3163FC9E7A",
+              "system": true
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Colin_Senger65@yahoo.com\",\n    \"firstName\": \"Ruben\",\n    \"lastName\": \"Carroll\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "a62d367e-1850-41bd-bfa2-5abff5e66907",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Set-Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A; Path=/; HttpOnly"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": []
+          },
+          "cookie": [],
+          "responseTime": 16,
+          "responseSize": 0
+        },
+        "id": "8bc7322c-438d-42c1-8c96-4939b27c04e8",
+        "assertions": [
+          {
+            "assertion": "test can update user with valid token",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "aeaaf31c-c5eb-4cac-b47e-015f0b34d867",
+          "length": 15,
+          "cycles": 1,
+          "position": 5,
+          "iteration": 0,
+          "httpRequestId": "cc567463-bdf2-43ed-83c6-97c3bd4fbde2"
+        },
+        "item": {
+          "id": "ce194dce-5248-49aa-bac6-0db9a5e6aa92",
+          "name": "Get user info when logged in",
+          "request": {
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              },
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "method": "GET",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "5042eb3f-6889-4acc-b339-fdef9880a1d4",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test can get user data with valid token\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.lastName).to.not.eql(pm.collectionVariables.get(\"lastName\"))",
+                  "    pm.expect(jsonData.firstName).to.not.eql(pm.collectionVariables.get(\"firstName\"))",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "ae197a1e-f7d7-416c-a7ac-014449ec5516"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "77b8e0d4-05b7-4ed7-8047-0fdb133fba2f"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "1"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "bf2e0ae6-ea57-4294-a1c4-3c9674fc55d7",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 83,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "61131c4d-3ecd-4e94-8fe2-22618833f6f0",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              55,
+              34,
+              44,
+              34,
+              101,
+              109,
+              97,
+              105,
+              108,
+              34,
+              58,
+              34,
+              67,
+              111,
+              108,
+              105,
+              110,
+              95,
+              83,
+              101,
+              110,
+              103,
+              101,
+              114,
+              54,
+              53,
+              64,
+              121,
+              97,
+              104,
+              111,
+              111,
+              46,
+              99,
+              111,
+              109,
+              34,
+              44,
+              34,
+              102,
+              105,
+              114,
+              115,
+              116,
+              78,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              82,
+              117,
+              98,
+              101,
+              110,
+              34,
+              44,
+              34,
+              108,
+              97,
+              115,
+              116,
+              78,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              67,
+              97,
+              114,
+              114,
+              111,
+              108,
+              108,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 10,
+          "responseSize": 87
+        },
+        "id": "ce194dce-5248-49aa-bac6-0db9a5e6aa92",
+        "assertions": [
+          {
+            "assertion": "test can get user data with valid token",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "8d85a3f8-13a0-4826-a881-a123f5feb9da",
+          "length": 15,
+          "cycles": 1,
+          "position": 6,
+          "iteration": 0,
+          "httpRequestId": "ddcc5c91-ba06-4d26-8171-1d1d90529015"
+        },
+        "item": {
+          "id": "d6478fc1-055a-434f-854d-4e839531992b",
+          "name": "Auth",
+          "request": {
+            "url": {
+              "path": [
+                "auth"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              }
+            ],
+            "method": "GET",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "auth"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "77b8e0d4-05b7-4ed7-8047-0fdb133fba2f"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "694e58ee-4fcb-4b97-aeea-bdd2951f9333",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 55,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "e75b3370-09d2-4bc2-b300-395f883243fc",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "x-user-id",
+              "value": "67"
+            },
+            {
+              "key": "x-user-email",
+              "value": "Colin_Senger65@yahoo.com"
+            },
+            {
+              "key": "x-user-first-name",
+              "value": "Ruben"
+            },
+            {
+              "key": "x-user-last-name",
+              "value": "Carroll"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": []
+          },
+          "cookie": [],
+          "responseTime": 6,
+          "responseSize": 0
+        },
+        "id": "d6478fc1-055a-434f-854d-4e839531992b"
+      },
+      {
+        "cursor": {
+          "ref": "97301757-ae9e-4d43-ae22-cab1f2b45bed",
+          "length": 15,
+          "cycles": 1,
+          "position": 7,
+          "iteration": 0,
+          "httpRequestId": "80a34d25-81dd-45e8-a620-4ac3b3b29e73"
+        },
+        "item": {
+          "id": "dd37722f-417b-4a0e-af66-3d3718993f80",
+          "name": "Logout with valid token",
+          "request": {
+            "url": {
+              "path": [
+                "user-logout"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              }
+            ],
+            "method": "DELETE",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "62cec46e-884c-4059-8188-3d956f849c5f",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test can logout with valid token\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "7adca9bf-6683-423d-9770-90b6930f54d1"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "user-logout"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "77b8e0d4-05b7-4ed7-8047-0fdb133fba2f"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "e5c97d10-35ec-4465-9080-8908e7f1a50e",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 55,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "DELETE",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "d15b835c-abde-4df8-aa61-25c8003c85d4",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": []
+          },
+          "cookie": [],
+          "responseTime": 11,
+          "responseSize": 0
+        },
+        "id": "dd37722f-417b-4a0e-af66-3d3718993f80",
+        "assertions": [
+          {
+            "assertion": "test can logout with valid token",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "7c785a18-894c-4829-b047-a87517c5702c",
+          "length": 15,
+          "cycles": 1,
+          "position": 8,
+          "iteration": 0,
+          "httpRequestId": "34951192-bdab-4247-8da2-0d9fb83820af"
+        },
+        "item": {
+          "id": "c945f15b-244d-483e-94cd-aab617f7e5eb",
+          "name": "Logout with invalid token",
+          "request": {
+            "url": {
+              "path": [
+                "user-logout"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              }
+            ],
+            "method": "DELETE",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "d763a23e-9ca7-4d9c-b26a-72f98eb2d93f",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test cannot logout with invalid token\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "7b0fd6a2-0c3a-420a-996d-efebe75e2484"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "user-logout"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "77b8e0d4-05b7-4ed7-8047-0fdb133fba2f"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "6317e834-ca27-41ff-b7fb-ad43dc3f4cfa",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 55,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "DELETE",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "2bca4682-aae7-4479-8ae7-2700bc0c1354",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              116,
+              105,
+              109,
+              101,
+              115,
+              116,
+              97,
+              109,
+              112,
+              34,
+              58,
+              34,
+              50,
+              48,
+              50,
+              48,
+              45,
+              48,
+              56,
+              45,
+              50,
+              50,
+              84,
+              50,
+              48,
+              58,
+              49,
+              49,
+              58,
+              49,
+              52,
+              46,
+              49,
+              52,
+              56,
+              43,
+              48,
+              48,
+              58,
+              48,
+              48,
+              34,
+              44,
+              34,
+              115,
+              116,
+              97,
+              116,
+              117,
+              115,
+              34,
+              58,
+              52,
+              48,
+              49,
+              44,
+              34,
+              101,
+              114,
+              114,
+              111,
+              114,
+              34,
+              58,
+              34,
+              85,
+              110,
+              97,
+              117,
+              116,
+              104,
+              111,
+              114,
+              105,
+              122,
+              101,
+              100,
+              34,
+              44,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              34,
+              44,
+              34,
+              112,
+              97,
+              116,
+              104,
+              34,
+              58,
+              34,
+              47,
+              117,
+              115,
+              101,
+              114,
+              45,
+              108,
+              111,
+              103,
+              111,
+              117,
+              116,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 5,
+          "responseSize": 116
+        },
+        "id": "c945f15b-244d-483e-94cd-aab617f7e5eb",
+        "assertions": [
+          {
+            "assertion": "test cannot logout with invalid token",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "e1549138-6c6d-4c81-a909-e2a9efe37ff1",
+          "length": 15,
+          "cycles": 1,
+          "position": 9,
+          "iteration": 0,
+          "httpRequestId": "d8377170-371b-4981-8af0-75f7d00c733f"
+        },
+        "item": {
+          "id": "706f1814-0303-4282-b800-4bc2cb73c2e4",
+          "name": "Sign In",
+          "request": {
+            "url": {
+              "path": [
+                "signin"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "16976459-9fa4-42d2-993c-e310c4c7fee7"
+              }
+            ],
+            "method": "GET",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "signin"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "16976459-9fa4-42d2-993c-e310c4c7fee7"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "777d5c1c-9daf-478d-8ed1-f155b1dbb59d",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 55,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "22da32f2-9e0d-4391-8a6b-bf9977dd3057",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              80,
+              108,
+              101,
+              97,
+              115,
+              101,
+              32,
+              112,
+              114,
+              111,
+              118,
+              105,
+              100,
+              101,
+              32,
+              118,
+              97,
+              108,
+              105,
+              100,
+              32,
+              99,
+              114,
+              101,
+              100,
+              101,
+              110,
+              116,
+              105,
+              97,
+              108,
+              115,
+              33,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 5,
+          "responseSize": 47
+        },
+        "id": "706f1814-0303-4282-b800-4bc2cb73c2e4"
+      },
+      {
+        "cursor": {
+          "ref": "485cdabe-fbe5-4993-92a1-1fdf58e1439d",
+          "length": 15,
+          "cycles": 1,
+          "position": 10,
+          "iteration": 0,
+          "httpRequestId": "366f5303-1fc1-411b-9d27-0e4d948bb12a"
+        },
+        "item": {
+          "id": "08c31e33-db06-4e75-88a7-259d2d32360f",
+          "name": "Second user registration",
+          "request": {
+            "url": {
+              "path": [
+                "register"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"password\": \"{{secondUserPassword}}\",\n    \"firstName\": \"{{secondUserFirstName}}\",\n    \"lastName\": \"{{secondUserLastName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "67806726-3b14-4c6e-bb5c-37b58d3d74ca",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"secondUserPassword\", pm.variables.replaceIn('{{$randomPassword}}'))",
+                  "pm.collectionVariables.set(\"secondUserEmail\", pm.variables.replaceIn('{{$randomEmail}}'))",
+                  "pm.collectionVariables.set(\"secondUserFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                  "pm.collectionVariables.set(\"secondUserLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+                ],
+                "_lastExecutionId": "30252de7-5a71-4a01-a874-896a47281c5b"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "ffafb246-a1d2-4291-8119-3b1b967dde91",
+                "type": "text/javascript",
+                "exec": [
+                  ""
+                ],
+                "_lastExecutionId": "3cc4b5bf-ad9b-4181-93be-7fd29dee72af"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "register"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "6f484ea0-e36c-48b8-887c-7a7ec832b0f7",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 142,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Marilyne_Wilderman88@hotmail.com\",\n    \"password\": \"cnvx02zG_LWAE9w\",\n    \"firstName\": \"Ignacio\",\n    \"lastName\": \"Thompson\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "0e67ab07-dc76-40bc-bc98-8dd7b7c43eab",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              54,
+              56,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 72,
+          "responseSize": 9
+        },
+        "id": "08c31e33-db06-4e75-88a7-259d2d32360f"
+      },
+      {
+        "cursor": {
+          "ref": "2cf848dc-0dd9-42b7-b431-03cbed093919",
+          "length": 15,
+          "cycles": 1,
+          "position": 11,
+          "iteration": 0,
+          "httpRequestId": "15f30a55-fa57-4853-88de-6630be17aa1a"
+        },
+        "item": {
+          "id": "dd12a42e-0ebb-4d5c-8093-cba42aad6f0d",
+          "name": "Second user login",
+          "request": {
+            "url": {
+              "path": [
+                "login"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"password\": \"{{secondUserPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "fcee0bbc-c7b8-4a3a-9395-f99211fb7206",
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody)",
+                  "pm.collectionVariables.set(\"authToken\", responseJSON[\"token\"])"
+                ],
+                "_lastExecutionId": "be661907-b6b6-4a5f-926d-8a0887073746"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "login"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "56dc4877-92f1-4092-b978-e7d17114166a",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 86,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Marilyne_Wilderman88@hotmail.com\",\n    \"password\": \"cnvx02zG_LWAE9w\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "2dc28f97-fc76-4e9e-9ab9-9eb4b99776b5",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-XSS-Protection",
+              "value": "1; mode=block"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "key": "Pragma",
+              "value": "no-cache"
+            },
+            {
+              "key": "Expires",
+              "value": "0"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              116,
+              111,
+              107,
+              101,
+              110,
+              34,
+              58,
+              34,
+              101,
+              101,
+              50,
+              51,
+              54,
+              54,
+              102,
+              98,
+              45,
+              48,
+              48,
+              52,
+              55,
+              45,
+              52,
+              98,
+              99,
+              53,
+              45,
+              98,
+              50,
+              51,
+              57,
+              45,
+              99,
+              50,
+              98,
+              55,
+              53,
+              55,
+              101,
+              57,
+              49,
+              55,
+              53,
+              99,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 69,
+          "responseSize": 48
+        },
+        "id": "dd12a42e-0ebb-4d5c-8093-cba42aad6f0d"
+      },
+      {
+        "cursor": {
+          "ref": "07558aa4-c883-486a-8216-5a61596fc684",
+          "length": 15,
+          "cycles": 1,
+          "position": 12,
+          "iteration": 0,
+          "httpRequestId": "d3e81032-487f-4ae5-848e-fb8dc1acc4dc"
+        },
+        "item": {
+          "id": "78db03b5-5d33-4b04-8df4-3dd94c477de3",
+          "name": "Second user updates data with own email",
+          "request": {
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              },
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "5"
+              }
+            ],
+            "method": "PUT",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "9664e6f3-afcb-405c-892e-4a7ec323393c",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                  "pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+                ],
+                "_lastExecutionId": "d67eee6b-74ba-4a41-82d2-e9a50a24f1da"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "d01df2e6-0645-4871-a923-987af96f06f9",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test can update user with valid token\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "ad519822-38ff-4a14-9209-0ed0d8d84199"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "ee2366fb-0047-4bc5-b239-c2b757e9175c"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "3082cabe-07c4-403f-a7bc-abd12c615867",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 104,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=CE664717E4A1133D38ACD769B0B9E44A",
+              "system": true
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Marilyne_Wilderman88@hotmail.com\",\n    \"firstName\": \"Adonis\",\n    \"lastName\": \"Becker\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "7b6a555e-c549-45cb-ade1-620c0273ed35",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Length",
+              "value": "0"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Set-Cookie",
+              "value": "JSESSIONID=AF0047CFBFC4FAC90D9D665FC1BFD5A4; Path=/; HttpOnly"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": []
+          },
+          "cookie": [],
+          "responseTime": 18,
+          "responseSize": 0
+        },
+        "id": "78db03b5-5d33-4b04-8df4-3dd94c477de3",
+        "assertions": [
+          {
+            "assertion": "test can update user with valid token",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "91a9cb67-0404-4d07-9866-d2df8f9bef80",
+          "length": 15,
+          "cycles": 1,
+          "position": 13,
+          "iteration": 0,
+          "httpRequestId": "7f4bb62e-d177-4eeb-811d-39cbde97be66"
+        },
+        "item": {
+          "id": "14667ab1-f87e-46f6-a339-39faf2288937",
+          "name": "Second user updates data without own email",
+          "request": {
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              },
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "5"
+              }
+            ],
+            "method": "PUT",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "7fc217e6-2d57-4cfc-9871-70f91105b60f",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+                  "pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+                ],
+                "_lastExecutionId": "79d31e5e-a8de-4265-8ec1-6598cdff4961"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "9061e9af-e6c7-464d-9bdd-a0b8e612f2f1",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test can update user with valid token\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "c7988af7-fc5e-41a7-8417-42836aba2096"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "ee2366fb-0047-4bc5-b239-c2b757e9175c"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "5"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "9b8529a0-0211-4dc6-959c-1a8ab78c48ff",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 95,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=AF0047CFBFC4FAC90D9D665FC1BFD5A4",
+              "system": true
+            }
+          ],
+          "method": "PUT",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"Colin_Senger65@yahoo.com\",\n    \"firstName\": \"Erika\",\n    \"lastName\": \"Bailey\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "6c124cfb-61ff-4c8f-9639-1c6b37bf200d",
+          "status": "Not Found",
+          "code": 404,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              99,
+              111,
+              100,
+              101,
+              34,
+              58,
+              52,
+              48,
+              52,
+              44,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              85,
+              115,
+              101,
+              114,
+              32,
+              110,
+              111,
+              116,
+              32,
+              102,
+              111,
+              117,
+              110,
+              100,
+              32,
+              98,
+              121,
+              32,
+              54,
+              56,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 22,
+          "responseSize": 45
+        },
+        "id": "14667ab1-f87e-46f6-a339-39faf2288937",
+        "assertions": [
+          {
+            "assertion": "test can update user with valid token",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "c9d609c1-a485-416f-ad1f-8a095ecab85d",
+          "length": 15,
+          "cycles": 1,
+          "position": 14,
+          "iteration": 0,
+          "httpRequestId": "ce5e8522-4a9b-4f2d-aae2-3aa36c9673d0"
+        },
+        "item": {
+          "id": "fad20daa-6d46-4fa4-85a7-cb769d554a25",
+          "name": "Second user reads only own data",
+          "request": {
+            "url": {
+              "path": [
+                "users",
+                "me"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": true,
+                  "key": "x-user-id",
+                  "value": "1"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "x-auth-token",
+                "value": "{{authToken}}"
+              },
+              {
+                "disabled": true,
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "method": "GET",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "926e5c84-865e-4b49-a302-2357fbdf64f1",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"test can get user data with valid token\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.lastName).to.not.eql(pm.collectionVariables.get(\"lastName\"))",
+                  "    pm.expect(jsonData.firstName).to.not.eql(pm.collectionVariables.get(\"firstName\"))",
+                  "});",
+                  ""
+                ],
+                "_lastExecutionId": "911ca257-e738-4dce-b977-1a574ac965aa"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "path": [
+              "users",
+              "me"
+            ],
+            "host": [
+              "arch",
+              "homework"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "x-auth-token",
+              "value": "ee2366fb-0047-4bc5-b239-c2b757e9175c"
+            },
+            {
+              "disabled": true,
+              "key": "x-user-id",
+              "value": "1"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "system": true
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.26.2",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "081afec2-bb1c-45a4-bddd-704d6b2bf934",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "arch.homework",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": 83,
+              "system": true
+            },
+            {
+              "key": "Cookie",
+              "value": "JSESSIONID=AF0047CFBFC4FAC90D9D665FC1BFD5A4",
+              "system": true
+            }
+          ],
+          "method": "GET",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          }
+        },
+        "response": {
+          "id": "edab59f6-d7a0-4da5-a8ec-1b696e4a5e2c",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Server",
+              "value": "nginx/1.17.10"
+            },
+            {
+              "key": "Date",
+              "value": "Sat, 22 Aug 2020 20:11:14 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "key": "Content-Encoding",
+              "value": "gzip"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              34,
+              54,
+              56,
+              34,
+              44,
+              34,
+              101,
+              109,
+              97,
+              105,
+              108,
+              34,
+              58,
+              34,
+              77,
+              97,
+              114,
+              105,
+              108,
+              121,
+              110,
+              101,
+              95,
+              87,
+              105,
+              108,
+              100,
+              101,
+              114,
+              109,
+              97,
+              110,
+              56,
+              56,
+              64,
+              104,
+              111,
+              116,
+              109,
+              97,
+              105,
+              108,
+              46,
+              99,
+              111,
+              109,
+              34,
+              44,
+              34,
+              102,
+              105,
+              114,
+              115,
+              116,
+              78,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              65,
+              100,
+              111,
+              110,
+              105,
+              115,
+              34,
+              44,
+              34,
+              108,
+              97,
+              115,
+              116,
+              78,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              66,
+              101,
+              99,
+              107,
+              101,
+              114,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 12,
+          "responseSize": 95
+        },
+        "id": "fad20daa-6d46-4fa4-85a7-cb769d554a25",
+        "assertions": [
+          {
+            "assertion": "test can get user data with valid token",
+            "skipped": false
+          }
+        ]
+      }
+    ],
+    "transfers": {
+      "responseTotal": 598
+    },
+    "failures": [],
+    "error": null
+  }
+}

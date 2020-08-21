@@ -1,0 +1,21 @@
+server:
+  port: 8001
+
+app:
+  database:
+    db: ${DB_NAME:architect}
+    host: ${DB_HOST:postgres}
+    port: ${DB_PORT:5434}
+    username: ${DB_USERNAME:architect}
+    password: ${DB_PASSWORD:architect}
+  auth-service:
+    url: http://auth-service.dev.svc.cluster.local:8000
+    token: testrandomtest
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${app.database.host}:${app.database.port}/${app.database.db}
+    username: ${app.database.username}
+    password: ${app.database.password}
+    driver-class-name: org.postgresql.Driver
+    platform: postgresql
