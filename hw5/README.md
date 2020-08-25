@@ -1,6 +1,10 @@
 ```bash
 
-minikube addons enable ingress
+kubectl create namespace monitoring
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx/
+helm install nginx stable/nginx-ingress --namespace monitoring -f nginx-ingress.yaml
+
+#minikube addons enable ingress
 
 kubectl create namespace dev
 kubectl config set-context --current --namespace=dev
