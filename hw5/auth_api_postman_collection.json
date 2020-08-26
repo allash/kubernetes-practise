@@ -1,0 +1,915 @@
+{
+	"info": {
+		"_postman_id": "abd084cc-5e9a-480a-bb17-ec6c2eea4aaf",
+		"name": "Auth API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User registration",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "30a49823-dc57-4842-b656-fcaf6d16155b",
+						"exec": [
+							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))",
+							"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))",
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))",
+							"",
+							"postman.setGlobalVariable(\"api_info\", () => {",
+							"    tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
+							"    tests[\"[INFO] Response: \" + responseBody] = true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "86109fc2-e310-48b9-9d7a-a7a3748b3d05",
+						"exec": [
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user info when not logged in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "63135a41-8334-40c3-a591-3cff8687b0ba",
+						"exec": [
+							"pm.test(\"test cannot get user data without login\", function () {",
+							"    pm.response.to.have.status(401);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.not.have.property(\"email\");",
+							"});",
+							"",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2282e36d-1f92-46f7-b290-e0229de0b54f",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "{{authToken}}"
+					},
+					{
+						"key": "x-user-id",
+						"type": "text",
+						"value": "1",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user when not logged in",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1738e5a7-7d5c-4a12-8d3c-db6e26849b48",
+						"exec": [
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7403056a-c31c-43e4-991f-114f29ed3b1c",
+						"exec": [
+							"pm.test(\"test cannot update user without login\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "{{authToken}}"
+					},
+					{
+						"key": "x-user-id",
+						"type": "text",
+						"value": "5",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ce2bd778-a834-4200-8253-2794f3a02ce3",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"authToken\", responseJSON[\"token\"]);",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user when logged in",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "99ca66b6-7b1f-4dc3-a09f-cbdec5e6cdcd",
+						"exec": [
+							"pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a88c9037-d085-4248-b506-0dd1fcc2c17b",
+						"exec": [
+							"pm.test(\"test can update user with valid token\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "{{authToken}}"
+					},
+					{
+						"key": "x-user-id",
+						"type": "text",
+						"value": "5",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user info when logged in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5042eb3f-6889-4acc-b339-fdef9880a1d4",
+						"exec": [
+							"pm.test(\"test can get user data with valid token\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.lastName).to.not.eql(pm.collectionVariables.get(\"lastName\"))",
+							"    pm.expect(jsonData.firstName).to.not.eql(pm.collectionVariables.get(\"firstName\"))",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{authToken}}",
+						"type": "text"
+					},
+					{
+						"key": "x-user-id",
+						"value": "1",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5a16c626-6b22-4d51-841c-dfbd12edc963",
+						"exec": [
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{authToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout with valid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "62cec46e-884c-4059-8188-3d956f849c5f",
+						"exec": [
+							"pm.test(\"test can logout with valid token\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{authToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-logout",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout with invalid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d763a23e-9ca7-4d9c-b26a-72f98eb2d93f",
+						"exec": [
+							"pm.test(\"test cannot logout with invalid token\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "{{authToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user-logout",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user-logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign In",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2834fb15-8dd6-484d-8b1b-6f401549aa62",
+						"exec": [
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "16976459-9fa4-42d2-993c-e310c4c7fee7",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@mail.com\",\n    \"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/signin",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Second user registration",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "67806726-3b14-4c6e-bb5c-37b58d3d74ca",
+						"exec": [
+							"pm.collectionVariables.set(\"secondUserPassword\", pm.variables.replaceIn('{{$randomPassword}}'))",
+							"pm.collectionVariables.set(\"secondUserEmail\", pm.variables.replaceIn('{{$randomEmail}}'))",
+							"pm.collectionVariables.set(\"secondUserFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"secondUserLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ffafb246-a1d2-4291-8119-3b1b967dde91",
+						"exec": [
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"password\": \"{{secondUserPassword}}\",\n    \"firstName\": \"{{secondUserFirstName}}\",\n    \"lastName\": \"{{secondUserLastName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Second user login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fcee0bbc-c7b8-4a3a-9395-f99211fb7206",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"authToken\", responseJSON[\"token\"]);",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"password\": \"{{secondUserPassword}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Second user updates data with own email",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9664e6f3-afcb-405c-892e-4a7ec323393c",
+						"exec": [
+							"pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d01df2e6-0645-4871-a923-987af96f06f9",
+						"exec": [
+							"pm.test(\"test can update user with valid token\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "{{authToken}}"
+					},
+					{
+						"key": "x-user-id",
+						"type": "text",
+						"value": "5",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{secondUserEmail}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Second user updates data without own email",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7fc217e6-2d57-4cfc-9871-70f91105b60f",
+						"exec": [
+							"pm.collectionVariables.set(\"updatedFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"updatedLastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9061e9af-e6c7-464d-9bdd-a0b8e612f2f1",
+						"exec": [
+							"pm.test(\"test can update user with valid token\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "{{authToken}}"
+					},
+					{
+						"key": "x-user-id",
+						"type": "text",
+						"value": "5",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email}}\",\n    \"firstName\": \"{{updatedFirstName}}\",\n    \"lastName\": \"{{updatedLastName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Second user reads only own data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "926e5c84-865e-4b49-a302-2357fbdf64f1",
+						"exec": [
+							"pm.test(\"test can get user data with valid token\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.lastName).to.not.eql(pm.collectionVariables.get(\"lastName\"))",
+							"    pm.expect(jsonData.firstName).to.not.eql(pm.collectionVariables.get(\"firstName\"))",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"type": "text",
+						"value": "{{authToken}}"
+					},
+					{
+						"key": "x-user-id",
+						"type": "text",
+						"value": "1",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@mail.com\",\n    \"firstName\": \"testF\",\n    \"lastName\": \"testL\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					],
+					"query": [
+						{
+							"key": "x-user-id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "833430c8-96a1-496f-9eb1-bcb264ebaa5a",
+			"key": "email",
+			"value": ""
+		},
+		{
+			"id": "0ca861d9-443b-4a4c-86dd-6db7d2cbd840",
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"id": "3841d0c4-3fcd-4386-88d6-51999d4fa928",
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"id": "0a0743d8-599c-49f0-8791-7c361f953dae",
+			"key": "password",
+			"value": ""
+		},
+		{
+			"id": "d2ab4a76-10c2-480e-82d3-a806b0cfeb0b",
+			"key": "authToken",
+			"value": ""
+		},
+		{
+			"id": "f96ecf14-c92b-47b7-82a1-88c5a3a43a6b",
+			"key": "updatedFirstName",
+			"value": ""
+		},
+		{
+			"id": "2145b8e0-09d1-46d4-bab9-2f7a10ac2fb5",
+			"key": "updatedLastName",
+			"value": ""
+		},
+		{
+			"id": "03bfc568-26e5-4e82-8def-50dbc6027e4b",
+			"key": "secondUserEmail",
+			"value": ""
+		},
+		{
+			"id": "1c74846e-7a41-4401-9dd8-05c2a012b1dc",
+			"key": "secondUserFirstName",
+			"value": ""
+		},
+		{
+			"id": "652bd759-6b8e-4001-b8bf-5e6b1935f554",
+			"key": "secondUserLastName",
+			"value": ""
+		},
+		{
+			"id": "b80a50b8-c238-4661-9c58-4786c4824edf",
+			"key": "secondUserPassword",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
