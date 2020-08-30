@@ -1,0 +1,5 @@
+app:
+  database:
+    host: ${DB_HOST:localhost}
+    migration-enabled: ${DB_MIGRATION_ENABLED:true}
+
