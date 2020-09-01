@@ -2,3 +2,6 @@ app:
   database:
     host: ${DB_HOST:localhost}
 
+kafka:
+  bootstrap-address: ${KAFKA_BOOTSTRAP_ADDRESS:127.0.0.1:9092}
+

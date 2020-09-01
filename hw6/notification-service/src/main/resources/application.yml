@@ -21,6 +21,9 @@ spring:
       pool-name: ${HIKARI_POOL_NAME:HikariPostgresPool}
       minimum-idle: ${HIKARI_MIN_IDLE:10}
 
+kafka:
+  bootstrap-address: ${KAFKA_BOOTSTRAP_ADDRESS:}
+
 logging:
   level:
     com:

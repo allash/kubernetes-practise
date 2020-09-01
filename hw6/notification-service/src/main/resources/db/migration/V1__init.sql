@@ -1,6 +1,7 @@
 CREATE TABLE "public"."notification" (
     id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
+    email VARCHAR NOT NULL,
     order_id BIGINT NOT NULL,
     status VARCHAR NOT NULL,
     created_at TIMESTAMP NOT NULL,

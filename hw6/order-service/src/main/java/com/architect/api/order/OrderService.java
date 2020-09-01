@@ -56,6 +56,7 @@ public class OrderService {
         OrderCreatedEvent orderCreatedEvent = OrderCreatedEvent.builder()
                 .orderId(entity.getId())
                 .email(getUserResponse.getEmail())
+                .userId(request.getUserId())
                 .status("SUCCESS")
                 .build();
         kafkaTemplate.send(ORDER_TOPIC, orderCreatedEvent);
