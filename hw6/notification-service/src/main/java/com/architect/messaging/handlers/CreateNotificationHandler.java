@@ -1,13 +1,13 @@
 package com.architect.messaging.handlers;
 
-import com.architect.messaging.DomainCommand;
+import com.architect.messaging.DomainCommandHandler;
 import com.architect.persistence.entities.NotificationEntity;
 import com.architect.persistence.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateNotificationHandler implements DomainCommand<CreateNotificationCommand> {
+public class CreateNotificationHandler implements DomainCommandHandler<CreateNotificationCommand> {
 
     private final NotificationRepository notificationRepository;
 

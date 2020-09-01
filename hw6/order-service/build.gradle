@@ -62,6 +62,8 @@ dependencies {
 
     implementation group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '2.5.5.RELEASE'
+
 
     // metrics
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.3.2.RELEASE'

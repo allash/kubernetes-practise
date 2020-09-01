@@ -10,13 +10,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class CreateAccountRequest {
     @NotBlank
-    private String firstName;
-    @NotBlank
-    private String lastName;
-    @NotBlank
     private String email;
-    @NotBlank
-    private String phone;
     @NotNull
     private Long userId;
 }

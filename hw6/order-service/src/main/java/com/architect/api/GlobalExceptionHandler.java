@@ -2,6 +2,7 @@ package com.architect.api;
 
 import com.architect.exceptions.DtoError;
 import com.architect.exceptions.EntityNotFoundException;
+import com.architect.exceptions.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,8 +25,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public DtoError handleNotFoundException(EntityNotFoundException exception) {
+        return buildError(HttpStatus.NOT_FOUND, exception);
+    }
+
+    @ExceptionHandler(ServiceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public DtoError handleServiceException(ServiceException exception) {
+        return buildError(HttpStatus.BAD_REQUEST, exception);
+    }
+
+    private DtoError buildError(HttpStatus status, Exception exception) {
         return DtoError.builder()
-                .code(HttpStatus.NOT_FOUND.value())
+                .code(status.value())
                 .message(exception.getMessage())
                 .build();
     }

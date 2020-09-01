@@ -1,10 +1,15 @@
 package com.architect.persistence.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Table(name = "order")
+@Getter
+@Setter
 @Entity
+@Table(name =  "\"order\"", schema = "public")
 public class OrderEntity extends BaseEntity {
     @Id
     @SequenceGenerator(name = "orderIdSeq", sequenceName = "order_id_seq", allocationSize = 1)
