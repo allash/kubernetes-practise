@@ -7,7 +7,7 @@ postgresql:
   postgresqlDatabase: order-architect
   service:
     type: NodePort
-    port: 5434
+    port: 5437
   persistence: 
     enabled: true
     size: 1Gi
@@ -21,14 +21,17 @@ db:
   database: "order-architect"
   username: "order-architect"
   password: "order-architect" 
-  port: "5434"
+  port: "5437"
+
+messaging:
+  kafkaUrl: http://kafka.messaging.svc.cluster.local:9092
 
 metrics:
   serviceMonitor:
     enabled: true
 
-ingress:
-  enabled: false
-  hosts:
-    - host: arch.homework
-      paths: ["/"]
+# ingress:
+#   enabled: false
+#   hosts:
+#     - host: arch.homework
+#       paths: ["/"]

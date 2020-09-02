@@ -7,7 +7,7 @@ postgresql:
   postgresqlDatabase: billing-architect
   service:
     type: NodePort
-    port: 5434
+    port: 5436
   persistence: 
     enabled: true
     size: 1Gi
@@ -21,14 +21,14 @@ db:
   database: "billing-architect"
   username: "billing-architect"
   password: "billing-architect" 
-  port: "5434"
+  port: "5436"
 
 metrics:
   serviceMonitor:
     enabled: true
 
-ingress:
-  enabled: false
-  hosts:
-    - host: arch.homework
-      paths: ["/"]
+# ingress:
+#   enabled: false
+#   hosts:
+#     - host: arch.homework
+#       paths: ["/"]

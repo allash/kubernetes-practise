@@ -14,20 +14,20 @@ spec:
     spec: 
       containers: 
       - name: billing-backend
-        image: allash/billing-service:v5
+        image: allash/billing-service:2
         ports: 
         - name: web
-          containerPort: 8001
+          containerPort: 8000
         livenessProbe:
           httpGet:
-            port: 8001
-            path: /health
+            port: 8000
+            path: /
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 2
         readinessProbe:
           httpGet:
-            port: 8001
+            port: 8000
             path: /health
           initialDelaySeconds: 10
           periodSeconds: 5

@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,6 +18,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +29,8 @@ import java.util.Map;
 @Setter
 public class KafkaConfig {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConfig.class.getName());
+
     private String bootstrapAddress;
 
     private KafkaProperties kafkaProperties;
@@ -35,6 +40,15 @@ public class KafkaConfig {
         this.kafkaProperties = kafkaProperties;
     }
 
+    @PostConstruct
+    public void postConstruct() {
+        if (bootstrapAddress == null) {
+            throw new IllegalStateException("Kafka bootstrap url cannot be null!");
+        }
+
+        LOGGER.info("Kafka url: {}", bootstrapAddress);
+    }
+
     // Json consumer configuration
 
     @Bean
@@ -42,12 +56,6 @@ public class KafkaConfig {
 
         JsonDeserializer<Object> jsonDeserializer = new JsonDeserializer<>();
         jsonDeserializer.addTrustedPackages("*");
-
-//        Map<String, Object> configProps = new HashMap<>();
-//        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-//        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, jsonDeserializer);
-//        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "order_group");
 
         return new DefaultKafkaConsumerFactory<>(
                 kafkaProperties.buildConsumerProperties(), new StringDeserializer(), jsonDeserializer

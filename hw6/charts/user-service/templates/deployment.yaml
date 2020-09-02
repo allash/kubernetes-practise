@@ -14,20 +14,20 @@ spec:
     spec: 
       containers: 
       - name: user-backend
-        image: allash/user-service:v5
+        image: allash/user-service:1
         ports: 
         - name: web
-          containerPort: 8001
+          containerPort: 8003
         livenessProbe:
           httpGet:
-            port: 8001
-            path: /health
+            port: 8003
+            path: /
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 2
         readinessProbe:
           httpGet:
-            port: 8001
+            port: 8003
             path: /health
           initialDelaySeconds: 10
           periodSeconds: 5

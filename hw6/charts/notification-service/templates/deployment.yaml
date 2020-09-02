@@ -14,20 +14,20 @@ spec:
     spec: 
       containers: 
       - name: notification-backend
-        image: allash/notification-service:v5
+        image: allash/notification-service:1
         ports: 
         - name: web
-          containerPort: 8001
+          containerPort: 8002
         livenessProbe:
           httpGet:
-            port: 8001
-            path: /health
+            port: 8002
+            path: /
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 2
         readinessProbe:
           httpGet:
-            port: 8001
+            port: 8002
             path: /health
           initialDelaySeconds: 10
           periodSeconds: 5
@@ -57,3 +57,8 @@ spec:
               secretKeyRef:
                 name: notification-secret
                 key: password
+          - name: KAFKA_BOOTSTRAP_ADDRESS
+            valueFrom:
+              secretKeyRef:
+                name: notification-messaging-secret
+                key: kafkaUrl

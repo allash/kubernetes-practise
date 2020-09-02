@@ -1,9 +1,6 @@
 package com.architect.api.account;
 
-import com.architect.api.account.dto.CreateAccountRequest;
-import com.architect.api.account.dto.CreateAccountResponse;
-import com.architect.api.account.dto.DepositMoneyRequest;
-import com.architect.api.account.dto.WithdrawMoneyRequest;
+import com.architect.api.account.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +27,11 @@ public class BillingAccountController {
     public CreateAccountResponse createAccount(@Valid @RequestBody CreateAccountRequest request) {
         LOGGER.info("Create account");
         return accountService.createAccount(request);
+    }
+
+    @GetMapping("/{userId}")
+    public GetAccountResponse fetchAccount(@PathVariable Long userId) {
+        return accountService.fetchAccountByUserId(userId);
     }
 
     @PostMapping("/{userId}/deposit")

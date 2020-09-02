@@ -1,9 +1,6 @@
 package com.architect.api.account;
 
-import com.architect.api.account.dto.CreateAccountRequest;
-import com.architect.api.account.dto.CreateAccountResponse;
-import com.architect.api.account.dto.DepositMoneyRequest;
-import com.architect.api.account.dto.WithdrawMoneyRequest;
+import com.architect.api.account.dto.*;
 import com.architect.exceptions.AccountNotFoundByIdException;
 import com.architect.exceptions.InsufficientFundsException;
 import com.architect.persistence.entities.BillingAccountEntity;
@@ -16,11 +13,20 @@ import java.math.BigDecimal;
 @Service
 final class BillingAccountService extends BaseService {
 
+    private final BillingAccountMapper mapper;
     private final AccountRepository accountRepository;
 
     @Autowired
-    BillingAccountService(AccountRepository accountRepository) {
+    BillingAccountService(BillingAccountMapper mapper,
+                          AccountRepository accountRepository) {
+        this.mapper = mapper;
         this.accountRepository = accountRepository;
+    }
+
+    GetAccountResponse fetchAccountByUserId(Long userId) {
+        BillingAccountEntity billingAccountEntity = accountRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccountNotFoundByIdException(userId));
+        return mapper.mapToGetAccountResponse(billingAccountEntity);
     }
 
     CreateAccountResponse createAccount(CreateAccountRequest request) {

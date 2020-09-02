@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: app
+  name: user-ingress
 spec:
   rules:
   - host: arch.homework
@@ -10,4 +10,5 @@ spec:
       - backend:
           serviceName: user-service
           servicePort: 8000
-        path: /users/me
+        path: /users
+

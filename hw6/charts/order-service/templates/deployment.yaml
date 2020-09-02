@@ -14,7 +14,7 @@ spec:
     spec: 
       containers: 
       - name: order-backend
-        image: allash/order-service:v1
+        image: allash/order-service:1
         ports: 
         - name: web
           containerPort: 8001
@@ -57,3 +57,8 @@ spec:
               secretKeyRef:
                 name: order-secret
                 key: password
+          - name: KAFKA_BOOTSTRAP_ADDRESS
+            valueFrom:
+              secretKeyRef:
+                name: order-messaging-secret
+                key: kafkaUrl
