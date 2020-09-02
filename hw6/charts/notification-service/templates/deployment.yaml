@@ -14,7 +14,7 @@ spec:
     spec: 
       containers: 
       - name: notification-backend
-        image: allash/notification-service:1
+        image: allash/notification-service:2
         ports: 
         - name: web
           containerPort: 8002
