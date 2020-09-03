@@ -1,0 +1,662 @@
+{
+	"info": {
+		"_postman_id": "94c76212-1331-4622-aa6f-4fac3b77eab9",
+		"name": "User/Billing/Order/Notification API dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "69a75ad7-51a1-41e0-89e8-8a6368d9c45d",
+						"exec": [
+							"pm.collectionVariables.set(\"phone\", '+' + _.random(10000000000000, 99999999999999));",
+							"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'));",
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'));",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'));",
+							"pm.collectionVariables.set(\"username\", pm.variables.replaceIn('{{$randomUserName}}'))",
+							"",
+							"postman.setGlobalVariable(\"api_info\", () => {",
+							"    tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
+							"    tests[\"[INFO] Response: \" + responseBody] = true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "90efb950-d934-4a09-8688-278b074b83a4",
+						"exec": [
+							"pm.test(\"test can create user and receive 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"id\");",
+							"    pm.collectionVariables.set(\"userId\", jsonData[\"id\"]);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{username}}\",\n    \"email\": \"{{email}}\",\n    \"phone\": \"{{phone}}\",\n    \"firstName\": \"{{firstName}}\",\n    \"lastName\": \"{{lastName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fb549fa0-adb5-42bd-886e-d4b9b8395a14",
+						"exec": [
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get billing account by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec645387-5137-4b14-be01-dd1782d74363",
+						"exec": [
+							"pm.test(\"test fetch billing account by id\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"userId\");",
+							"    pm.expect(jsonData).to.have.property(\"email\");",
+							"    pm.expect(jsonData).to.have.property(\"balance\");",
+							"    pm.expect(jsonData[\"balance\"]).to.equal(0);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/accounts/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"accounts",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deposit money",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bb8d53f1-864b-4ecf-b70a-68c9442d8799",
+						"exec": [
+							"pm.test(\"test billing account deposit money\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "afe8d316-7e61-4e4c-ab4b-3cef76b0faee",
+						"exec": [
+							"pm.collectionVariables.set(\"amount\", 100);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"amount\": {{amount}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/accounts/{{userId}}/deposit",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"accounts",
+						"{{userId}}",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get billing account by id after deposit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ea5b81eb-4aed-4cbd-9820-4c4f674f9982",
+						"exec": [
+							"pm.test(\"test fetch billing account by id after deposit\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"userId\");",
+							"    pm.expect(jsonData).to.have.property(\"email\");",
+							"    pm.expect(jsonData).to.have.property(\"balance\");",
+							"    pm.expect(jsonData[\"balance\"]).to.equal(pm.collectionVariables.get(\"amount\"));",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/accounts/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"accounts",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "873e3154-3cea-4b05-9438-9753204fca62",
+						"exec": [
+							"pm.test(\"test create order success\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c1838e7a-e8e9-404b-9dfb-a5d615ec7d4d",
+						"exec": [
+							"pm.collectionVariables.set(\"orderPrice\", 50);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": {{userId}},\n    \"price\": {{orderPrice}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get billing after order success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "52071792-cdd3-4d73-8fb4-55474a99ba41",
+						"exec": [
+							"pm.test(\"test fetch billing account by id after successful order\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"userId\");",
+							"    pm.expect(jsonData).to.have.property(\"email\");",
+							"    pm.expect(jsonData).to.have.property(\"balance\");",
+							"",
+							"    var expectedBalance = pm.collectionVariables.get(\"amount\") - pm.collectionVariables.get(\"orderPrice\");",
+							"    pm.expect(jsonData[\"balance\"]).to.equal(expectedBalance);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/accounts/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"accounts",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get notifications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e95b2097-0a64-45b9-8dde-d6d44dbb1ff1",
+						"exec": [
+							"pm.test(\"test fetch notification with state success created\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.be.above(0);",
+							"    ",
+							"    var userId = pm.collectionVariables.get(\"userId\");",
+							"    var notification = jsonData[jsonData.length - 1];",
+							"    ",
+							"    pm.expect(notification[\"userId\"]).to.equal(userId);",
+							"    pm.expect(notification[\"state\"]).to.equal(\"SUCCESS\");",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"john.doe\",\n    \"email\": \"test@mail.com\",\n    \"phone\": \"123\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/notifications",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create order with insufficient amount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "52edc2ff-925a-4e39-ad28-8169d1822135",
+						"exec": [
+							"pm.test(\"test create order success\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e9ef8176-0d8b-458f-9fb0-1a504e1057f6",
+						"exec": [
+							"pm.collectionVariables.set(\"orderPrice\", 50);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": {{userId}},\n    \"price\": 1000\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get billing after order failure",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "80b23db9-69ee-4bca-8fe7-162024df8021",
+						"exec": [
+							"pm.test(\"test fetch billing account by id after successful order\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"userId\");",
+							"    pm.expect(jsonData).to.have.property(\"email\");",
+							"    pm.expect(jsonData).to.have.property(\"balance\");",
+							"",
+							"    var expectedBalance = pm.collectionVariables.get(\"amount\") - pm.collectionVariables.get(\"orderPrice\");",
+							"    pm.expect(jsonData[\"balance\"]).to.equal(expectedBalance);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/billing/accounts/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"billing",
+						"accounts",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get notifications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1a5d6703-982f-420b-a6a6-41fb7dc3d782",
+						"exec": [
+							"pm.test(\"test fetch notification with state success created\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.be.above(0);",
+							"    ",
+							"    var userId = pm.collectionVariables.get(\"userId\");",
+							"    var notification = jsonData[jsonData.length - 1];",
+							"    ",
+							"    pm.expect(notification[\"userId\"]).to.equal(userId);",
+							"    pm.expect(notification[\"state\"]).to.equal(\"FAILURE\");",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"john.doe\",\n    \"email\": \"test@mail.com\",\n    \"phone\": \"123\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/notifications",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notifications"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "9c4f10ab-5e08-41a1-abfd-1997be2ab3f2",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ebb09419-9297-4d5d-a826-7a3e858d1ab1",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "ecdd5075-469c-477f-acae-30be184eabf3",
+			"key": "email",
+			"value": ""
+		},
+		{
+			"id": "d92451ef-36ae-462f-950d-9e5fd4ea3054",
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"id": "7dff0ced-271d-4bae-9bf3-3439123f6d59",
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"id": "93656e61-cbec-4cd7-89a4-d8a5c1016034",
+			"key": "password",
+			"value": ""
+		},
+		{
+			"id": "aa5da567-87b5-4c01-91b3-e6f8ead73115",
+			"key": "phone",
+			"value": ""
+		},
+		{
+			"id": "ad3199c6-d743-443a-b381-90764802d2bd",
+			"key": "username",
+			"value": ""
+		},
+		{
+			"id": "086f5c01-107d-4209-b136-c9957ec6040a",
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"id": "f15c953b-9330-4ac4-86ad-a258b3b78e36",
+			"key": "amount",
+			"value": ""
+		},
+		{
+			"id": "974f1b8c-0f48-4028-af6f-6d01c3b65d81",
+			"key": "orderPrice",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
