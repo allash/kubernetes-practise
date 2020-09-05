@@ -33,6 +33,15 @@ newman run postman/order.postman_collection.json -e postman/dev.postman_environm
 * notification-service: 8002
 * user-service:8003
 
+## Notes 
+### If you're on a mac using the hyperkit driver, here's a workaround to change memory or cpu without deleting your vm:
+
+```bash
+minikube stop
+edit $HOME/.minikube/machines/minikube/config.json, change "Driver.CPU" and/or "Driver.Memory"
+minikube start
+```
+
 ## Create order sequence diagram
 
 ![sequence-diagram](./README.assets/mermaid-diagram-20200903164534.png)
