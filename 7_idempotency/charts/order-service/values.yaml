@@ -1,0 +1,56 @@
+replicaCount: 1
+
+postgresql:
+  fullnameOverride: order-postgres
+  postgresqlUsername: order-architect
+  postgresqlPassword: order-architect
+  postgresqlDatabase: order-architect
+  service:
+    type: NodePort
+    port: 5437
+  persistence: 
+    enabled: true
+    size: 1Gi
+  resources: 
+    requests: 
+      memory: 256Mi
+      cpu: 250m
+
+redis:
+  fullnameOverride: order-redis
+  password: order-pass
+  service: 
+    type: NodePort
+    port: 6379
+  sentinel: 
+    resources:
+      requests: 
+      memory: 256Mi
+      cpu: 250m
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+  slave:
+    persistence:
+      enabled: true
+      size: 1Gi
+
+db: 
+  host: "order-postgres"
+  database: "order-architect"
+  username: "order-architect"
+  password: "order-architect" 
+  port: "5437"
+
+messaging:
+  kafkaUrl: http://kafka.messaging.svc.cluster.local:9092
+
+metrics:
+  serviceMonitor:
+    enabled: true
+
+redisDb:
+  host: "order-redis"
+  port: "6379"
+  password: "order-pass"
