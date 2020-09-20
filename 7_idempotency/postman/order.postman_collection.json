@@ -1,0 +1,231 @@
+{
+	"info": {
+		"_postman_id": "b4970ebe-fdf1-48a4-92a8-274b85958220",
+		"name": "Idempotency",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create non-idempotent order",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "88c026b7-1ee5-4142-a3b6-54f8448feba4",
+						"exec": [
+							"pm.collectionVariables.set(\"amount\", 100);",
+							"",
+							"postman.setGlobalVariable(\"api_info\", () => {",
+							"    tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
+							"    tests[\"[INFO] Response: \" + responseBody] = true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3582e4ed-f51b-47fd-8ed9-8f17cfe77231",
+						"exec": [
+							"pm.test(\"test cannot create non-idempotent order\", function () {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-request-id",
+						"value": "03ba7808-ee0c-45ce-a1a4-48ef1b1cbb7a",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"price\": {{amount}},\n    \"userId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get idempotency token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4c8f67f5-c67f-43ac-851a-d7efa684481f",
+						"exec": [
+							"pm.test(\"test can get generated idempotence key\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    let idempotenceKey = pm.response.headers.get('x-request-id');",
+							"    pm.expect(idempotenceKey).to.not.be.null;",
+							"    pm.collectionVariables.set(\"idempotence-key\", idempotenceKey);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"price\": 10,\n    \"userId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tokens/idempotence-key",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tokens",
+						"idempotence-key"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create idempotent order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "86499add-ee46-4bd0-b204-4cc23a6d241b",
+						"exec": [
+							"pm.test(\"test can create idempotent order\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-request-id",
+						"type": "text",
+						"value": "{{idempotence-key}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"price\": {{amount}},\n    \"userId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create idempotent order with duplicate key",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "82994701-977f-4022-9c70-0c11033a4bee",
+						"exec": [
+							"pm.test(\"test cannot create idempotent order with duplicate key\", function () {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							"",
+							"eval(pm.globals.get(\"api_info\"))();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-request-id",
+						"type": "text",
+						"value": "{{idempotence-key}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"price\": {{amount}},\n    \"userId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "69b1030c-4d34-4fb2-ac03-d33fd909695d",
+			"key": "idempotence-key",
+			"value": ""
+		},
+		{
+			"id": "5639133c-1352-4f61-aec2-4f19f72036a1",
+			"key": "amount",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}

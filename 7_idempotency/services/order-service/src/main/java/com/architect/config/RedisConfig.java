@@ -30,7 +30,7 @@ public class RedisConfig {
     @PostConstruct
     public void postConstruct() {
         LOGGER.info("Init redis config...");
-        
+
         if (host == null || password == null) {
             throw new IllegalStateException("Redis host and password cannot be null!");
         }

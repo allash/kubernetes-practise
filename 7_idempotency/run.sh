@@ -1,19 +1,8 @@
-## Installation
+#!/usr/bin/env bash
 
-### Option 1
+set -e
 
-```bash
-
-cd 7_idempotency
-./run.sh
-
-```
-
-### Option 2
-
-```bash
-
-cd 7_idempotency
+echo "Creating kafka service..."
 
 kubectl create namespace messaging
 kubectl config set-context --current --namespace=messaging
@@ -25,31 +14,20 @@ helm install kafka bitnami/kafka --set zookeeper.enabled=false --set replicaCoun
 kubectl create namespace dev
 kubectl config set-context --current --namespace=dev
 
+echo "Updating dependencies..."
+
 helm dependency update charts/order-service/
 
+echo "Creating order service..."
+
 helm install order-service charts/order-service --atomic
+
+echo "Creating nginx ingress..."
 
 kubectl create namespace monitoring
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx/
 helm install nginx stable/nginx-ingress --namespace monitoring -f nginx-ingress.yaml --atomic
 
+echo "Running tests..."
+
 newman run postman/order.postman_collection.json -e postman/dev.postman_environment.json
-
-```
-
-## PORTS
-* order-service: 8001
-
-## Notes 
-### If you're on a mac using the hyperkit driver, here's a workaround to change memory or cpu without deleting your vm:
-
-```bash
-minikube stop
-edit $HOME/.minikube/machines/minikube/config.json, change "Driver.CPU" and/or "Driver.Memory"
-minikube start
-```
-
-## Create order sequence diagram
-### Idempotence request with X-Request-Id
-
-![sequence-diagram](./README.assets/mermaid-diagram-20200920233443.png)

@@ -19,22 +19,22 @@ postgresql:
 redis:
   fullnameOverride: order-redis
   password: order-pass
-  service: 
-    type: NodePort
-    port: 6379
-  sentinel: 
-    resources:
-      requests: 
-      memory: 256Mi
-      cpu: 250m
   master:
+    service: 
+      type: NodePort
+      port: 6379
     persistence:
       enabled: true
       size: 1Gi
   slave:
+    service: 
+      type: NodePort
+      port: 6379
     persistence:
       enabled: true
       size: 1Gi
+  replication: 
+    slaveReplicas: 1
 
 db: 
   host: "order-postgres"
@@ -51,6 +51,6 @@ metrics:
     enabled: true
 
 redisDb:
-  host: "order-redis"
+  host: "order-redis-master.dev.svc.cluster.local"
   port: "6379"
   password: "order-pass"
