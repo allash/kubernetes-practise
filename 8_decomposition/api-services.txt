@@ -1,0 +1,41 @@
+Auth Service
+POST /api/v1/auth/login { email, password }
+POST /api/v1/auth/register { firstName, lastName, email, password }
+
+User Service 
+GET /api/v1/users/me
+PUT /api/v1/users/me
+DELETE /api/v1/users/me
+
+Hotel Service 
+GET /api/v1/hotels?search=test-hotel&checkInFrom=12-12-2020
+GET /api/v1/hotels/{id}
+POST /api/v1/hotels { name, city } Role: Admin
+POST /api/v1/hotels/{id}/rooms
+PUT /api/v1/hotels/{id}/rooms/{roomId}
+
+Booking Service 
+POST /api/v1/bookings { userId, hotelId, roomId }
+DELETE /api/v1/bookings/{id} { userId, hotelId, roomId }
+GET /api/v1/bookings
+
+Kitchen Service 
+BreakfastReservedEvent { userId, dates }
+
+
+
+Services:
+1. Auth Service
+2. User Service 
+3. Hotel Service 
+4. Booking Service 
+5. Kitchen Service 
+6. Vehicle Service 
+7. Warehouse Service 
+8. Notification Service (Email, Push notification, SMS)
+9. Billing Service
+10. Search Service
+----------- ???
+11. Warehouse Service 
+12. Recommendation Service 
+13. Points Service
